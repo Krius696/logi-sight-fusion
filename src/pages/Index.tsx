@@ -1,6 +1,7 @@
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
 import { ExecutiveCockpit } from "@/components/dashboard/ExecutiveCockpit";
 import { AlertsOverview } from "@/components/dashboard/AlertsOverview";
+import { TransportHeatMap } from "@/components/dashboard/TransportHeatMap";
 
 const Index = () => {
   return (
@@ -8,6 +9,9 @@ const Index = () => {
       <div className="space-y-8">
         {/* Executive Cockpit mit Kern-KPIs */}
         <ExecutiveCockpit />
+        
+        {/* Transport Heat-Map für Live-Tracking */}
+        <TransportHeatMap />
         
         {/* Alerts und Warnmeldungen */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
