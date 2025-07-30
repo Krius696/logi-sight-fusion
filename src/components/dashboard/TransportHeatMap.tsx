@@ -1,7 +1,9 @@
+import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { RiskDetailModal } from "./RiskDetailModal";
 import { useTransports } from "@/hooks/useTransports";
+import { Transport } from "@/types";
 import { 
   Truck, 
   MapPin, 
@@ -15,7 +17,6 @@ import {
   WifiOff
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
 
 const statusConfig = {
   'pünktlich': {

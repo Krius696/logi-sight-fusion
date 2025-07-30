@@ -1,20 +1,5 @@
 import { useState, useCallback } from 'react';
-
-interface MitigationAnalysis {
-  shipmentId: string;
-  rootCause: string;
-  recommendations: {
-    priority: 'high' | 'medium' | 'low';
-    action: string;
-    impact: string;
-    timeline: string;
-  }[];
-  riskFactors: string[];
-  predictedOutcome: {
-    withMitigation: string;
-    withoutMitigation: string;
-  };
-}
+import { MitigationAnalysis } from '@/types';
 
 const AI_API_URL = import.meta.env.VITE_AI_API_URL || 'http://localhost:3001';
 

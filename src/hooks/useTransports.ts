@@ -1,37 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useToast } from '@/hooks/use-toast';
-
-export interface Transport {
-  id: string;
-  auftragsNr: string;
-  route: {
-    from: string;
-    to: string;
-  };
-  status: 'pünktlich' | 'verspätet' | 'kritisch' | 'angekommen';
-  eta: string;
-  planEta: string;
-  delay: number;
-  position: {
-    lat: number;
-    lng: number;
-    address: string;
-  };
-  cargo: string;
-  driver: string;
-  progress: number;
-  riskScore?: number;
-}
-
-interface TransportUpdate {
-  id: string;
-  status?: Transport['status'];
-  eta?: string;
-  delay?: number;
-  position?: Transport['position'];
-  progress?: number;
-  riskScore?: number;
-}
+import { Transport, TransportUpdate } from '@/types';
 
 const GRAPHQL_URL = import.meta.env.VITE_GRAPHQL_URL || 'ws://localhost:4000/graphql';
 const WS_URL = import.meta.env.VITE_WS_URL || 'ws://localhost:4000/ws';
