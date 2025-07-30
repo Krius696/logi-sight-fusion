@@ -1,0 +1,56 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`RiskBadge > renders critical risk (>= 60%) with correct styling 1`] = `
+<div>
+  <div
+    class="px-2 py-1 rounded-full text-xs font-medium border bg-status-critical/20 text-status-critical border-status-critical/30"
+    data-testid="risk-badge"
+  >
+    Risk 75%
+  </div>
+</div>
+`;
+
+exports[`RiskBadge > renders edge case: exactly 40% as warning 1`] = `
+<div>
+  <div
+    class="px-2 py-1 rounded-full text-xs font-medium border bg-status-warning/20 text-status-warning border-status-warning/30"
+    data-testid="risk-badge"
+  >
+    Risk 40%
+  </div>
+</div>
+`;
+
+exports[`RiskBadge > renders edge case: exactly 60% as critical 1`] = `
+<div>
+  <div
+    class="px-2 py-1 rounded-full text-xs font-medium border bg-status-critical/20 text-status-critical border-status-critical/30"
+    data-testid="risk-badge"
+  >
+    Risk 60%
+  </div>
+</div>
+`;
+
+exports[`RiskBadge > renders low risk (< 40%) with correct styling 1`] = `
+<div>
+  <div
+    class="px-2 py-1 rounded-full text-xs font-medium border bg-status-excellent/20 text-status-excellent border-status-excellent/30"
+    data-testid="risk-badge"
+  >
+    Risk 25%
+  </div>
+</div>
+`;
+
+exports[`RiskBadge > renders warning risk (40-59%) with correct styling 1`] = `
+<div>
+  <div
+    class="px-2 py-1 rounded-full text-xs font-medium border bg-status-warning/20 text-status-warning border-status-warning/30"
+    data-testid="risk-badge"
+  >
+    Risk 45%
+  </div>
+</div>
+`;

@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { RiskDetailModal } from "./RiskDetailModal";
+import { useTransports } from "@/hooks/useTransports";
 import { 
   Truck, 
   MapPin, 
@@ -9,106 +10,12 @@ import {
   CheckCircle,
   Package,
   Shield,
-  TrendingUp
+  TrendingUp,
+  Wifi,
+  WifiOff
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
-
-interface Transport {
-  id: string;
-  auftragsNr: string;
-  route: {
-    from: string;
-    to: string;
-  };
-  status: 'pünktlich' | 'verspätet' | 'kritisch' | 'angekommen';
-  eta: string;
-  planEta: string;
-  delay: number; // in Minuten
-  position: {
-    lat: number;
-    lng: number;
-    address: string;
-  };
-  cargo: string;
-  driver: string;
-  progress: number; // 0-100%
-  riskScore?: number; // 0-100% - ML predicted delay risk
-}
-
-// Mock-Transportdaten für Live-Tracking mit ML Risk Scores
-const transports: Transport[] = [
-  {
-    id: 'T-001',
-    auftragsNr: 'SO-8832',
-    route: { from: 'München', to: 'Hamburg' },
-    status: 'verspätet',
-    eta: '14:45',
-    planEta: '14:00',
-    delay: 45,
-    position: { lat: 52.3, lng: 9.8, address: 'A7 bei Hannover' },
-    cargo: 'Elektronikteile (2.4t)',
-    driver: 'M. Schmidt',
-    progress: 65,
-    riskScore: 72 // High risk due to current delay
-  },
-  {
-    id: 'T-002',
-    auftragsNr: 'SO-8833',
-    route: { from: 'Berlin', to: 'Stuttgart' },
-    status: 'pünktlich',
-    eta: '16:20',
-    planEta: '16:30',
-    delay: -10,
-    position: { lat: 50.8, lng: 11.2, address: 'A9 bei Erfurt' },
-    cargo: 'Maschinenbauteile (4.8t)',
-    driver: 'A. Weber',
-    progress: 45,
-    riskScore: 25 // Low risk, ahead of schedule
-  },
-  {
-    id: 'T-003',
-    auftragsNr: 'SO-8834',
-    route: { from: 'Köln', to: 'Dresden' },
-    status: 'kritisch',
-    eta: '18:15',
-    planEta: '17:00',
-    delay: 75,
-    position: { lat: 50.9, lng: 6.9, address: 'A1 Stau bei Köln' },
-    cargo: 'Chemikalien (3.2t)',
-    driver: 'P. Müller',
-    progress: 20,
-    riskScore: 89 // Critical risk due to traffic and delay
-  },
-  {
-    id: 'T-004',
-    auftragsNr: 'SO-8835',
-    route: { from: 'Frankfurt', to: 'Nürnberg' },
-    status: 'angekommen',
-    eta: '12:30',
-    planEta: '12:45',
-    delay: -15,
-    position: { lat: 49.5, lng: 11.1, address: 'Nürnberg Logistikzentrum' },
-    cargo: 'Automotive Teile (5.1t)',
-    driver: 'S. Fischer',
-    progress: 100,
-    riskScore: 5 // Delivered successfully
-  },
-  {
-    id: 'T-005',
-    auftragsNr: 'SO-8836',
-    route: { from: 'Düsseldorf', to: 'Leipzig' },
-    status: 'pünktlich',
-    eta: '15:30',
-    planEta: '15:30',
-    delay: 0,
-    position: { lat: 51.3, lng: 7.5, address: 'A44 bei Dortmund' },
-    cargo: 'Textilien (1.8t)',
-    driver: 'L. Becker',
-    progress: 30,
-    riskScore: 35 // Moderate risk due to traffic conditions
-  }
-];
 
 const statusConfig = {
   'pünktlich': {
@@ -138,6 +45,7 @@ const statusConfig = {
 };
 
 export function TransportHeatMap() {
+  const { transports, loading, error, connected } = useTransports();
   const [selectedTransport, setSelectedTransport] = useState<Transport | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -174,9 +82,24 @@ export function TransportHeatMap() {
                 {highRiskTransports.length} High Risk
               </Badge>
             )}
-            <div className="flex items-center gap-1 text-muted-foreground">
-              <div className="w-2 h-2 bg-status-excellent rounded-full animate-pulse"></div>
-              <span>Live</span>
+            <div className="flex items-center gap-2 text-muted-foreground">
+              <div className="flex items-center gap-1">
+                {connected ? (
+                  <>
+                    <Wifi className="h-3 w-3 text-status-excellent" />
+                    <div className="w-2 h-2 bg-status-excellent rounded-full animate-pulse"></div>
+                    <span className="text-status-excellent">Live</span>
+                  </>
+                ) : (
+                  <>
+                    <WifiOff className="h-3 w-3 text-status-warning" />
+                    <span className="text-status-warning">Offline</span>
+                  </>
+                )}
+              </div>
+              {error && (
+                <span className="text-xs text-status-critical">({error})</span>
+              )}
             </div>
           </div>
         </div>

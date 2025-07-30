@@ -65,6 +65,30 @@ const getMitigationSuggestions = (riskScore: number) => {
 };
 
 export function RiskDetailModal({ transport, isOpen, onClose }: RiskDetailModalProps) {
+  const { getMitigationAnalysis, loading: aiLoading, error: aiError } = useAIMitigation();
+  const [mitigationData, setMitigationData] = useState<any>(null);
+  const [showAIAnalysis, setShowAIAnalysis] = useState(false);
+
+  // Reset analysis data when modal opens with new transport
+  useEffect(() => {
+    if (isOpen && transport) {
+      setMitigationData(null);
+      setShowAIAnalysis(false);
+    }
+  }, [isOpen, transport?.id]);
+
+  const handleAIAnalysis = async () => {
+    if (!transport) return;
+    
+    setShowAIAnalysis(true);
+    try {
+      const analysis = await getMitigationAnalysis(transport.id);
+      setMitigationData(analysis);
+    } catch (error) {
+      console.error('Failed to get AI analysis:', error);
+    }
+  };
+
   if (!transport) return null;
 
   const riskScore = transport.riskScore || 0;
@@ -225,6 +249,130 @@ export function RiskDetailModal({ transport, isOpen, onClose }: RiskDetailModalP
               Maßnahmen einleiten
             </Button>
           </div>
+        </div>
+
+        {/* AI Mitigation Analysis Section */}
+        <div className="space-y-4">
+          <Separator />
+          
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Brain className="h-5 w-5 text-primary" />
+              <h3 className="text-lg font-semibold">KI-Risiko Analyse</h3>
+            </div>
+            
+            {!showAIAnalysis && (
+              <Button 
+                onClick={handleAIAnalysis}
+                disabled={aiLoading}
+                className="gap-2"
+              >
+                {aiLoading ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Brain className="h-4 w-4" />
+                )}
+                Analyse starten
+              </Button>
+            )}
+          </div>
+
+          {showAIAnalysis && (
+            <div className="space-y-4">
+              {aiLoading && (
+                <div className="flex items-center justify-center py-8">
+                  <div className="flex items-center gap-3 text-muted-foreground">
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                    <span>KI analysiert Risikofaktoren...</span>
+                  </div>
+                </div>
+              )}
+
+              {aiError && (
+                <div className="flex items-center gap-2 p-3 rounded-lg bg-status-critical/10 border border-status-critical/30">
+                  <AlertCircle className="h-4 w-4 text-status-critical" />
+                  <span className="text-sm text-status-critical">
+                    Analyse fehlgeschlagen: {aiError}
+                  </span>
+                </div>
+              )}
+
+              {mitigationData && (
+                <div className="space-y-4">
+                  {/* Root Cause */}
+                  <div className="p-4 rounded-lg bg-muted/50 border">
+                    <h4 className="font-medium mb-2 flex items-center gap-2">
+                      <AlertTriangle className="h-4 w-4 text-status-warning" />
+                      Ursachenanalyse
+                    </h4>
+                    <p className="text-sm text-muted-foreground">
+                      {mitigationData.rootCause}
+                    </p>
+                  </div>
+
+                  {/* Risk Factors */}
+                  <div className="space-y-2">
+                    <h4 className="font-medium">Identifizierte Risikofaktoren</h4>
+                    <div className="space-y-1">
+                      {mitigationData.riskFactors.map((factor: string, index: number) => (
+                        <div key={index} className="flex items-start gap-2 text-sm">
+                          <div className="w-1 h-1 rounded-full bg-status-warning mt-2 flex-shrink-0" />
+                          <span className="text-muted-foreground">{factor}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Recommendations */}
+                  <div className="space-y-3">
+                    <h4 className="font-medium">Empfohlene Maßnahmen</h4>
+                    {mitigationData.recommendations.map((rec: any, index: number) => (
+                      <div key={index} className="p-3 rounded-lg border bg-card">
+                        <div className="flex items-start justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <Badge 
+                              variant={rec.priority === 'high' ? 'destructive' : 
+                                     rec.priority === 'medium' ? 'secondary' : 'outline'}
+                              className="text-xs"
+                            >
+                              {rec.priority === 'high' ? 'Hohe Priorität' :
+                               rec.priority === 'medium' ? 'Mittlere Priorität' : 'Niedrige Priorität'}
+                            </Badge>
+                            <span className="text-xs text-muted-foreground">{rec.timeline}</span>
+                          </div>
+                        </div>
+                        <p className="font-medium text-sm mb-1">{rec.action}</p>
+                        <p className="text-xs text-muted-foreground">{rec.impact}</p>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Predicted Outcomes */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="p-3 rounded-lg bg-status-critical/10 border border-status-critical/30">
+                      <h5 className="font-medium text-sm mb-1 flex items-center gap-2">
+                        <AlertTriangle className="h-3 w-3 text-status-critical" />
+                        Ohne Maßnahmen
+                      </h5>
+                      <p className="text-xs text-muted-foreground">
+                        {mitigationData.predictedOutcome.withoutMitigation}
+                      </p>
+                    </div>
+                    
+                    <div className="p-3 rounded-lg bg-status-excellent/10 border border-status-excellent/30">
+                      <h5 className="font-medium text-sm mb-1 flex items-center gap-2">
+                        <CheckCircle2 className="h-3 w-3 text-status-excellent" />
+                        Mit Maßnahmen
+                      </h5>
+                      <p className="text-xs text-muted-foreground">
+                        {mitigationData.predictedOutcome.withMitigation}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </DialogContent>
     </Dialog>
