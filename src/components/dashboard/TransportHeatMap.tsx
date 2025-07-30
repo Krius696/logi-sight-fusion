@@ -1,14 +1,18 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { RiskDetailModal } from "./RiskDetailModal";
 import { 
   Truck, 
   MapPin, 
   Clock, 
   AlertTriangle,
   CheckCircle,
-  Package
+  Package,
+  Shield,
+  TrendingUp
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useState } from "react";
 
 interface Transport {
   id: string;
@@ -29,9 +33,10 @@ interface Transport {
   cargo: string;
   driver: string;
   progress: number; // 0-100%
+  riskScore?: number; // 0-100% - ML predicted delay risk
 }
 
-// Mock-Transportdaten für Live-Tracking
+// Mock-Transportdaten für Live-Tracking mit ML Risk Scores
 const transports: Transport[] = [
   {
     id: 'T-001',
@@ -44,7 +49,8 @@ const transports: Transport[] = [
     position: { lat: 52.3, lng: 9.8, address: 'A7 bei Hannover' },
     cargo: 'Elektronikteile (2.4t)',
     driver: 'M. Schmidt',
-    progress: 65
+    progress: 65,
+    riskScore: 72 // High risk due to current delay
   },
   {
     id: 'T-002',
@@ -57,7 +63,8 @@ const transports: Transport[] = [
     position: { lat: 50.8, lng: 11.2, address: 'A9 bei Erfurt' },
     cargo: 'Maschinenbauteile (4.8t)',
     driver: 'A. Weber',
-    progress: 45
+    progress: 45,
+    riskScore: 25 // Low risk, ahead of schedule
   },
   {
     id: 'T-003',
@@ -70,7 +77,8 @@ const transports: Transport[] = [
     position: { lat: 50.9, lng: 6.9, address: 'A1 Stau bei Köln' },
     cargo: 'Chemikalien (3.2t)',
     driver: 'P. Müller',
-    progress: 20
+    progress: 20,
+    riskScore: 89 // Critical risk due to traffic and delay
   },
   {
     id: 'T-004',
@@ -83,7 +91,8 @@ const transports: Transport[] = [
     position: { lat: 49.5, lng: 11.1, address: 'Nürnberg Logistikzentrum' },
     cargo: 'Automotive Teile (5.1t)',
     driver: 'S. Fischer',
-    progress: 100
+    progress: 100,
+    riskScore: 5 // Delivered successfully
   },
   {
     id: 'T-005',
@@ -96,7 +105,8 @@ const transports: Transport[] = [
     position: { lat: 51.3, lng: 7.5, address: 'A44 bei Dortmund' },
     cargo: 'Textilien (1.8t)',
     driver: 'L. Becker',
-    progress: 30
+    progress: 30,
+    riskScore: 35 // Moderate risk due to traffic conditions
   }
 ];
 
@@ -128,14 +138,18 @@ const statusConfig = {
 };
 
 export function TransportHeatMap() {
+  const [selectedTransport, setSelectedTransport] = useState<Transport | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const handleTransportClick = (transport: Transport) => {
-    console.log(`Transport ${transport.id} Details anzeigen`);
-    // Hier würde normalerweise ein Detail-Modal geöffnet oder zur Tracking-Seite navigiert
+    setSelectedTransport(transport);
+    setIsModalOpen(true);
   };
 
   const activeTransports = transports.filter(t => t.status !== 'angekommen');
   const delayedTransports = transports.filter(t => t.delay > 15);
   const onTimeTransports = transports.filter(t => t.delay <= 0 && t.status !== 'angekommen');
+  const highRiskTransports = transports.filter(t => t.riskScore !== undefined && t.riskScore >= 60);
 
   return (
     <Card>
@@ -152,6 +166,12 @@ export function TransportHeatMap() {
             {delayedTransports.length > 0 && (
               <Badge variant="secondary" className="bg-status-warning/20 text-status-warning">
                 {delayedTransports.length} Verspätet
+              </Badge>
+            )}
+            {highRiskTransports.length > 0 && (
+              <Badge variant="secondary" className="bg-status-critical/20 text-status-critical border border-status-critical/30">
+                <AlertTriangle className="h-3 w-3 mr-1" />
+                {highRiskTransports.length} High Risk
               </Badge>
             )}
             <div className="flex items-center gap-1 text-muted-foreground">
@@ -202,6 +222,29 @@ export function TransportHeatMap() {
                         >
                           {transport.status.toUpperCase()}
                         </Badge>
+                        
+                        {/* ML Risk Score Badge */}
+                        {transport.riskScore !== undefined && (
+                          <div className={cn(
+                            "flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium",
+                            transport.riskScore >= 60 
+                              ? "bg-status-critical/20 text-status-critical border border-status-critical/30" 
+                              : transport.riskScore >= 40
+                                ? "bg-status-warning/20 text-status-warning border border-status-warning/30"
+                                : "bg-status-excellent/20 text-status-excellent border border-status-excellent/30"
+                          )}>
+                            {transport.riskScore >= 60 && (
+                              <AlertTriangle className="h-3 w-3" />
+                            )}
+                            {transport.riskScore < 60 && transport.riskScore >= 40 && (
+                              <TrendingUp className="h-3 w-3" />
+                            )}
+                            {transport.riskScore < 40 && (
+                              <Shield className="h-3 w-3" />
+                            )}
+                            Risk {transport.riskScore}%
+                          </div>
+                        )}
                       </div>
                       
                       <div className="grid grid-cols-2 gap-4 text-sm">
@@ -290,6 +333,13 @@ export function TransportHeatMap() {
           </div>
         </div>
       </CardContent>
+      
+      {/* Risk Detail Modal */}
+      <RiskDetailModal 
+        transport={selectedTransport}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </Card>
   );
 }
