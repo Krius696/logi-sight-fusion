@@ -2,6 +2,7 @@ import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
 import { ExecutiveCockpit } from "@/components/dashboard/ExecutiveCockpit";
 import { AlertsOverview } from "@/components/dashboard/AlertsOverview";
 import { TransportHeatMap } from "@/components/dashboard/TransportHeatMap";
+import { Link } from "react-router-dom";
 
 const Index = () => {
   return (
@@ -24,22 +25,22 @@ const Index = () => {
             <div className="bg-card border border-border rounded-lg p-4">
               <h3 className="font-semibold text-foreground mb-3">Quick Actions</h3>
               <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Transport-Tracking</span>
+                <Link to="/transport-tracking" className="flex justify-between items-center hover:bg-muted/50 p-2 rounded transition-colors">
+                  <span className="text-muted-foreground hover:text-foreground">Transport-Tracking</span>
                   <span className="text-chart-primary">→</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Kostenanalyse</span>
+                </Link>
+                <Link to="/cost-analysis" className="flex justify-between items-center hover:bg-muted/50 p-2 rounded transition-colors">
+                  <span className="text-muted-foreground hover:text-foreground">Kostenanalyse</span>
                   <span className="text-chart-primary">→</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Bestandsoptimierung</span>
+                </Link>
+                <Link to="/inventory-optimization" className="flex justify-between items-center hover:bg-muted/50 p-2 rounded transition-colors">
+                  <span className="text-muted-foreground hover:text-foreground">Bestandsoptimierung</span>
                   <span className="text-chart-primary">→</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">KI-Empfehlungen</span>
+                </Link>
+                <Link to="/ai-recommendations" className="flex justify-between items-center hover:bg-muted/50 p-2 rounded transition-colors">
+                  <span className="text-muted-foreground hover:text-foreground">KI-Empfehlungen</span>
                   <span className="text-chart-primary">→</span>
-                </div>
+                </Link>
               </div>
             </div>
             
