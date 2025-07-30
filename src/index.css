@@ -53,6 +53,18 @@ All colors MUST be HSL.
     --sidebar-border: 220 13% 91%;
 
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Logistik Dashboard Ampelfarben */
+    --status-excellent: 142 76% 36%; /* Grün */
+    --status-good: 45 93% 47%; /* Gelb */
+    --status-warning: 25 95% 53%; /* Orange */
+    --status-critical: 0 84% 60%; /* Rot */
+    
+    /* Dashboard-spezifische Farben */
+    --dashboard-bg: 210 20% 98%;
+    --kpi-card: 0 0% 100%;
+    --chart-primary: 217 91% 60%;
+    --chart-secondary: 142 69% 58%;
   }
 
   .dark {
@@ -91,6 +103,18 @@ All colors MUST be HSL.
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Logistik Dashboard Ampelfarben - Dark Mode */
+    --status-excellent: 142 69% 58%;
+    --status-good: 45 93% 47%;
+    --status-warning: 25 95% 53%;
+    --status-critical: 0 84% 60%;
+    
+    /* Dashboard-spezifische Farben - Dark Mode */
+    --dashboard-bg: 217 32% 17%;
+    --kpi-card: 217 32% 17%;
+    --chart-primary: 217 91% 60%;
+    --chart-secondary: 142 69% 58%;
   }
 }
 

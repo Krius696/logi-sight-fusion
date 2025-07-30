@@ -61,6 +61,20 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				status: {
+					excellent: 'hsl(var(--status-excellent))',
+					good: 'hsl(var(--status-good))',
+					warning: 'hsl(var(--status-warning))',
+					critical: 'hsl(var(--status-critical))'
+				},
+				dashboard: {
+					bg: 'hsl(var(--dashboard-bg))',
+					card: 'hsl(var(--kpi-card))'
+				},
+				chart: {
+					primary: 'hsl(var(--chart-primary))',
+					secondary: 'hsl(var(--chart-secondary))'
 				}
 			},
 			borderRadius: {
