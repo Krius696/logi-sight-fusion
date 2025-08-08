@@ -2,9 +2,10 @@ import { ReactNode } from "react";
 
 interface DashboardLayoutProps {
   children: ReactNode;
+  headerActions?: ReactNode;
 }
 
-export function DashboardLayout({ children }: DashboardLayoutProps) {
+export function DashboardLayout({ children, headerActions }: DashboardLayoutProps) {
   return (
     <div className="min-h-screen bg-dashboard-bg">
       {/* Header */}
@@ -18,13 +19,16 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
               Live-Dashboard für Supply Chain Management
             </p>
           </div>
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <div className="flex items-center gap-1">
-              <div className="w-2 h-2 bg-status-excellent rounded-full animate-pulse"></div>
-              <span>Live</span>
+          <div className="flex items-center gap-3">
+            {headerActions ? <div className="flex items-center">{headerActions}</div> : null}
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <div className="flex items-center gap-1">
+                <div className="w-2 h-2 bg-status-excellent rounded-full animate-pulse"></div>
+                <span>Live</span>
+              </div>
+              <span>•</span>
+              <span>Letzte Aktualisierung: {new Date().toLocaleTimeString('de-DE')}</span>
             </div>
-            <span>•</span>
-            <span>Letzte Aktualisierung: {new Date().toLocaleTimeString('de-DE')}</span>
           </div>
         </div>
       </header>

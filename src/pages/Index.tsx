@@ -2,11 +2,20 @@ import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
 import { ExecutiveCockpit } from "@/components/dashboard/ExecutiveCockpit";
 import { AlertsOverview } from "@/components/dashboard/AlertsOverview";
 import { TransportHeatMap } from "@/components/dashboard/TransportHeatMap";
+import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { Settings } from "lucide-react";
 
 const Index = () => {
   return (
-    <DashboardLayout>
+    <DashboardLayout headerActions={(
+      <Link to="/integrations/n8n">
+        <Button variant="outline" size="sm">
+          <Settings className="w-4 h-4 mr-2" />
+          n8n Einstellungen
+        </Button>
+      </Link>
+    )}>
       <div className="space-y-8">
         {/* Executive Cockpit mit Kern-KPIs */}
         <ExecutiveCockpit />
