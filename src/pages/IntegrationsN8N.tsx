@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Breadcrumb, BreadcrumbEllipsis, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useN8N, type N8NConfig } from "@/hooks/useN8N";
 import { useToast } from "@/hooks/use-toast";
 import { Check, Link as LinkIcon, Shield, TestTube2, Save, ArrowLeft } from "lucide-react";
@@ -15,7 +16,15 @@ const IntegrationsN8N = () => {
   const { toast } = useToast();
   const [form, setForm] = useState<N8NConfig>(() => ({ token: config.token, webhooks: { ...config.webhooks } }));
   const [testing, setTesting] = useState<Record<string, boolean>>({});
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogKey, setDialogKey] = useState<keyof N8NConfig["webhooks"] | null>(null);
+  const [dialogValue, setDialogValue] = useState("");
 
+  const openDialog = (key: keyof N8NConfig["webhooks"]) => {
+    setDialogKey(key);
+    setDialogValue(form.webhooks?.[key] || "");
+    setDialogOpen(true);
+  };
   useEffect(() => {
     document.title = "n8n Integration | Dashboard";
   }, []);
@@ -75,7 +84,8 @@ const IntegrationsN8N = () => {
             <div className="space-y-2">
               <Label htmlFor="wh1" className="flex items-center gap-2"><LinkIcon className="w-4 h-4" /> Transport-Tracking Webhook</Label>
               <div className="flex gap-2">
-                <Input id="wh1" placeholder="https://n8n.example.com/webhook/transport" value={form.webhooks?.transportTracking || ""} onChange={(e) => updateWebhook("transportTracking", e.target.value)} />
+                <Input id="wh1" placeholder="https://n8n.example.com/webhook/transport" value={form.webhooks?.transportTracking || ""} readOnly />
+                <Button type="button" variant="outline" onClick={() => openDialog("transportTracking")}>Link einfügen</Button>
                 <Button type="button" variant="secondary" onClick={() => handleTest("transportTracking")} disabled={testing["transportTracking"]}>
                   {testing["transportTracking"] ? <TestTube2 className="w-4 h-4 animate-pulse" /> : <Check className="w-4 h-4" />}
                 </Button>
@@ -84,7 +94,8 @@ const IntegrationsN8N = () => {
             <div className="space-y-2">
               <Label htmlFor="wh2" className="flex items-center gap-2"><LinkIcon className="w-4 h-4" /> Kostenanalyse Webhook</Label>
               <div className="flex gap-2">
-                <Input id="wh2" placeholder="https://n8n.example.com/webhook/cost" value={form.webhooks?.costAnalysis || ""} onChange={(e) => updateWebhook("costAnalysis", e.target.value)} />
+                <Input id="wh2" placeholder="https://n8n.example.com/webhook/cost" value={form.webhooks?.costAnalysis || ""} readOnly />
+                <Button type="button" variant="outline" onClick={() => openDialog("costAnalysis")}>Link einfügen</Button>
                 <Button type="button" variant="secondary" onClick={() => handleTest("costAnalysis")} disabled={testing["costAnalysis"]}>
                   {testing["costAnalysis"] ? <TestTube2 className="w-4 h-4 animate-pulse" /> : <Check className="w-4 h-4" />}
                 </Button>
@@ -93,7 +104,8 @@ const IntegrationsN8N = () => {
             <div className="space-y-2">
               <Label htmlFor="wh3" className="flex items-center gap-2"><LinkIcon className="w-4 h-4" /> Bestandsoptimierung Webhook</Label>
               <div className="flex gap-2">
-                <Input id="wh3" placeholder="https://n8n.example.com/webhook/inventory" value={form.webhooks?.inventoryOptimization || ""} onChange={(e) => updateWebhook("inventoryOptimization", e.target.value)} />
+                <Input id="wh3" placeholder="https://n8n.example.com/webhook/inventory" value={form.webhooks?.inventoryOptimization || ""} readOnly />
+                <Button type="button" variant="outline" onClick={() => openDialog("inventoryOptimization")}>Link einfügen</Button>
                 <Button type="button" variant="secondary" onClick={() => handleTest("inventoryOptimization")} disabled={testing["inventoryOptimization"]}>
                   {testing["inventoryOptimization"] ? <TestTube2 className="w-4 h-4 animate-pulse" /> : <Check className="w-4 h-4" />}
                 </Button>
@@ -102,7 +114,8 @@ const IntegrationsN8N = () => {
             <div className="space-y-2">
               <Label htmlFor="wh4" className="flex items-center gap-2"><LinkIcon className="w-4 h-4" /> KI-Empfehlungen Webhook</Label>
               <div className="flex gap-2">
-                <Input id="wh4" placeholder="https://n8n.example.com/webhook/ai" value={form.webhooks?.aiRecommendations || ""} onChange={(e) => updateWebhook("aiRecommendations", e.target.value)} />
+                <Input id="wh4" placeholder="https://n8n.example.com/webhook/ai" value={form.webhooks?.aiRecommendations || ""} readOnly />
+                <Button type="button" variant="outline" onClick={() => openDialog("aiRecommendations")}>Link einfügen</Button>
                 <Button type="button" variant="secondary" onClick={() => handleTest("aiRecommendations")} disabled={testing["aiRecommendations"]}>
                   {testing["aiRecommendations"] ? <TestTube2 className="w-4 h-4 animate-pulse" /> : <Check className="w-4 h-4" />}
                 </Button>
@@ -115,6 +128,41 @@ const IntegrationsN8N = () => {
             </div>
           </CardContent>
         </Card>
+
+        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Webhook-Link einfügen</DialogTitle>
+              <DialogDescription>
+                Füge die vollständige n8n Webhook-URL ein. Der Token wird automatisch als Bearer gesendet.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-2">
+              <Label htmlFor="whDialog">Webhook-URL</Label>
+              <Input
+                id="whDialog"
+                placeholder="https://n8n.example.com/webhook/..."
+                value={dialogValue}
+                onChange={(e) => setDialogValue(e.target.value)}
+              />
+            </div>
+            <DialogFooter>
+              <Button type="button" variant="secondary" onClick={() => setDialogOpen(false)}>
+                Abbrechen
+              </Button>
+              <Button
+                type="button"
+                onClick={() => {
+                  if (!dialogKey) return;
+                  updateWebhook(dialogKey, dialogValue.trim());
+                  setDialogOpen(false);
+                }}
+              >
+                Speichern
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </DashboardLayout>
   );
