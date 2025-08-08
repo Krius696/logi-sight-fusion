@@ -2,11 +2,21 @@ import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, TrendingUp, TrendingDown, DollarSign, Fuel, Truck, Users } from "lucide-react";
+import { ArrowLeft, TrendingUp, TrendingDown, DollarSign, Fuel, Truck, Users, Bot, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
+import { useN8N } from "@/hooks/useN8N";
+import { useState } from "react";
 
 const CostAnalysis = () => {
+  const { triggerByKey } = useN8N();
+  const [sending, setSending] = useState(false);
+
+  const handleSendToN8N = async () => {
+    setSending(true);
+    await triggerByKey("costAnalysis", { month: new Date().toISOString().slice(0,7), data: monthlyData });
+    setSending(false);
+  };
   const monthlyData = [
     { month: 'Jan', transport: 45000, fuel: 12000, personal: 28000, wartung: 8000 },
     { month: 'Feb', transport: 52000, fuel: 14000, personal: 29000, wartung: 6000 },
@@ -74,6 +84,12 @@ const CostAnalysis = () => {
               <h1 className="text-2xl font-bold text-foreground">Kostenanalyse</h1>
               <p className="text-muted-foreground">Detaillierte Kostenaufschlüsselung und Trends</p>
             </div>
+          </div>
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm" onClick={handleSendToN8N} disabled={sending}>
+              {sending ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Bot className="w-4 h-4 mr-2" />}
+              An n8n senden
+            </Button>
           </div>
         </div>
 

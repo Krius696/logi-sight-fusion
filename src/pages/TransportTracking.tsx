@@ -3,11 +3,23 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useTransports } from "@/hooks/useTransports";
-import { MapPin, Clock, AlertTriangle, CheckCircle, ArrowLeft } from "lucide-react";
+import { MapPin, Clock, AlertTriangle, CheckCircle, ArrowLeft, Bot, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useState } from "react";
+import { useN8N } from "@/hooks/useN8N";
 
 const TransportTracking = () => {
   const { transports, loading, connected } = useTransports();
+  const { triggerByKey } = useN8N();
+  const [sending, setSending] = useState(false);
+
+  const handleSendToN8N = async () => {
+    setSending(true);
+    await triggerByKey("transportTracking", {
+      transports: transports.map((t) => ({ id: t.id, status: t.status, route: t.route })),
+    });
+    setSending(false);
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -44,7 +56,11 @@ const TransportTracking = () => {
               <p className="text-muted-foreground">Live-Verfolgung aller aktiven Transporte</p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
+            <Button variant="outline" size="sm" onClick={handleSendToN8N} disabled={sending || loading}>
+              {sending ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Bot className="w-4 h-4 mr-2" />}
+              An n8n senden
+            </Button>
             <div className={`w-2 h-2 rounded-full ${connected ? 'bg-status-excellent animate-pulse' : 'bg-status-critical'}`}></div>
             <span className="text-sm text-muted-foreground">
               {connected ? 'Live' : 'Offline'}

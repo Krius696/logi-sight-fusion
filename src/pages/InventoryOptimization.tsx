@@ -3,11 +3,21 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { ArrowLeft, Package, AlertTriangle, TrendingUp, BarChart3, RefreshCw } from "lucide-react";
+import { ArrowLeft, Package, AlertTriangle, TrendingUp, BarChart3, RefreshCw, Bot, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from "recharts";
+import { useN8N } from "@/hooks/useN8N";
+import { useState } from "react";
 
 const InventoryOptimization = () => {
+  const { triggerByKey } = useN8N();
+  const [sending, setSending] = useState(false);
+
+  const handleSendToN8N = async () => {
+    setSending(true);
+    await triggerByKey("inventoryOptimization", { criticalItems, turnoverData });
+    setSending(false);
+  };
   const inventoryData = [
     { week: 'KW 20', bestand: 85, bedarf: 75, optimal: 80 },
     { week: 'KW 21', bestand: 72, bedarf: 80, optimal: 80 },
@@ -99,10 +109,16 @@ const InventoryOptimization = () => {
               <p className="text-muted-foreground">Intelligente Lagerbestandsverwaltung und -optimierung</p>
             </div>
           </div>
-          <Button variant="outline" size="sm">
-            <RefreshCw className="w-4 h-4 mr-2" />
-            Aktualisieren
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm">
+              <RefreshCw className="w-4 h-4 mr-2" />
+              Aktualisieren
+            </Button>
+            <Button variant="outline" size="sm" onClick={handleSendToN8N} disabled={sending}>
+              {sending ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Bot className="w-4 h-4 mr-2" />}
+              An n8n senden
+            </Button>
+          </div>
         </div>
 
         {/* KPI Overview */}

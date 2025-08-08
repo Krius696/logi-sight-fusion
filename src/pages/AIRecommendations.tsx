@@ -3,13 +3,16 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useAIMitigation } from "@/hooks/useAIMitigation";
-import { ArrowLeft, Brain, TrendingUp, AlertTriangle, CheckCircle, Clock, Zap } from "lucide-react";
+import { ArrowLeft, Brain, TrendingUp, AlertTriangle, CheckCircle, Clock, Zap, Bot, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import { useN8N } from "@/hooks/useN8N";
 
 const AIRecommendations = () => {
   const { getMitigationAnalysis, loading } = useAIMitigation();
   const [analysis, setAnalysis] = useState(null);
+  const { triggerByKey } = useN8N();
+  const [sending, setSending] = useState(false);
 
   const mockRecommendations = [
     {
@@ -117,10 +120,16 @@ const AIRecommendations = () => {
     }
   };
 
-  const loadAIAnalysis = async () => {
-    const result = await getMitigationAnalysis('T-001');
-    setAnalysis(result);
-  };
+const loadAIAnalysis = async () => {
+  const result = await getMitigationAnalysis('T-001');
+  setAnalysis(result);
+};
+
+const handleSendToN8N = async () => {
+  setSending(true);
+  await triggerByKey("aiRecommendations", { recommendations: mockRecommendations });
+  setSending(false);
+};
 
   return (
     <DashboardLayout>
@@ -143,6 +152,10 @@ const AIRecommendations = () => {
             <Button variant="outline" size="sm" onClick={loadAIAnalysis} disabled={loading}>
               <Brain className="w-4 h-4 mr-2" />
               {loading ? 'Lädt...' : 'Analyse laden'}
+            </Button>
+            <Button variant="outline" size="sm" onClick={handleSendToN8N} disabled={sending}>
+              {sending ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Bot className="w-4 h-4 mr-2" />}
+              An n8n senden
             </Button>
           </div>
         </div>
