@@ -14,7 +14,258 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      ai_recommendations: {
+        Row: {
+          category: string
+          created_at: string
+          description: string
+          id: string
+          impact: string
+          priority: string
+          savings_potential: number | null
+          status: string
+          timeline: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          description: string
+          id?: string
+          impact: string
+          priority: string
+          savings_potential?: number | null
+          status?: string
+          timeline: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string
+          id?: string
+          impact?: string
+          priority?: string
+          savings_potential?: number | null
+          status?: string
+          timeline?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      alerts: {
+        Row: {
+          category: string
+          created_at: string
+          id: string
+          is_read: boolean | null
+          message: string
+          related_entity_id: string | null
+          related_entity_type: string | null
+          severity: string
+          title: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          id?: string
+          is_read?: boolean | null
+          message: string
+          related_entity_id?: string | null
+          related_entity_type?: string | null
+          severity: string
+          title: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          id?: string
+          is_read?: boolean | null
+          message?: string
+          related_entity_id?: string | null
+          related_entity_type?: string | null
+          severity?: string
+          title?: string
+        }
+        Relationships: []
+      }
+      cost_entries: {
+        Row: {
+          amount: number
+          category: string
+          created_at: string
+          id: string
+          month: number
+          year: number
+        }
+        Insert: {
+          amount: number
+          category: string
+          created_at?: string
+          id?: string
+          month: number
+          year: number
+        }
+        Update: {
+          amount?: number
+          category?: string
+          created_at?: string
+          id?: string
+          month?: number
+          year?: number
+        }
+        Relationships: []
+      }
+      inventory_items: {
+        Row: {
+          category: string
+          created_at: string
+          current_stock: number
+          id: string
+          last_delivery: string | null
+          location: string | null
+          max_stock: number
+          min_stock: number
+          name: string
+          next_delivery: string | null
+          sku: string
+          status: string
+          supplier: string | null
+          unit: string
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          current_stock?: number
+          id?: string
+          last_delivery?: string | null
+          location?: string | null
+          max_stock?: number
+          min_stock?: number
+          name: string
+          next_delivery?: string | null
+          sku: string
+          status: string
+          supplier?: string | null
+          unit?: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          current_stock?: number
+          id?: string
+          last_delivery?: string | null
+          location?: string | null
+          max_stock?: number
+          min_stock?: number
+          name?: string
+          next_delivery?: string | null
+          sku?: string
+          status?: string
+          supplier?: string | null
+          unit?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      kpis: {
+        Row: {
+          category: string
+          change_percent: number | null
+          id: string
+          metric_name: string
+          recorded_at: string
+          trend: string | null
+          unit: string | null
+          value: number
+        }
+        Insert: {
+          category: string
+          change_percent?: number | null
+          id?: string
+          metric_name: string
+          recorded_at?: string
+          trend?: string | null
+          unit?: string | null
+          value: number
+        }
+        Update: {
+          category?: string
+          change_percent?: number | null
+          id?: string
+          metric_name?: string
+          recorded_at?: string
+          trend?: string | null
+          unit?: string | null
+          value?: number
+        }
+        Relationships: []
+      }
+      transports: {
+        Row: {
+          auftrag_nr: string
+          cargo: string
+          created_at: string
+          delay_minutes: number | null
+          driver: string
+          eta: string
+          id: string
+          plan_eta: string
+          position_address: string | null
+          position_lat: number | null
+          position_lng: number | null
+          progress: number | null
+          risk_score: number | null
+          route_from: string
+          route_to: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          auftrag_nr: string
+          cargo: string
+          created_at?: string
+          delay_minutes?: number | null
+          driver: string
+          eta: string
+          id?: string
+          plan_eta: string
+          position_address?: string | null
+          position_lat?: number | null
+          position_lng?: number | null
+          progress?: number | null
+          risk_score?: number | null
+          route_from: string
+          route_to: string
+          status: string
+          updated_at?: string
+        }
+        Update: {
+          auftrag_nr?: string
+          cargo?: string
+          created_at?: string
+          delay_minutes?: number | null
+          driver?: string
+          eta?: string
+          id?: string
+          plan_eta?: string
+          position_address?: string | null
+          position_lat?: number | null
+          position_lng?: number | null
+          progress?: number | null
+          risk_score?: number | null
+          route_from?: string
+          route_to?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
